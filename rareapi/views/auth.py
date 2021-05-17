@@ -55,7 +55,7 @@ def register_user(request):
         bio=req_body['bio'],
         user=new_user,
         profile_image_url=['profileImageUrl'],
-        created_on=
+        created_on=datetime.now()
     )
 
     # Commit the user to the database by saving it
