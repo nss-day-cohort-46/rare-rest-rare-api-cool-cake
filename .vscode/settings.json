@@ -2,7 +2,7 @@
   "python.linting.pylintEnabled": true,
   "python.linting.enabled": true,
   "python.linting.pylintArgs": [
-    "--django-settings-module=levelup.settings",
+    "--django-settings-module=rare.settings",
   ],
   "sqltools.connections": [
     {
