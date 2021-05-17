@@ -1,0 +1,56 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$216000$qMRH8szID7Z8$Vljya2V3XfruOHuvx1hGz9ZyKg4bxbw7rc2WO0gTR7I=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "me@me.com",
+            "first_name": "Steve",
+            "last_name": "Brownlee",
+            "email": "me@me.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2020-08-28T14:51:39.989Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$216000$qMRH8szID7Z8$Vljya2V3XfruOHuvx1hGz9ZyKg4bxbw7rc2WO0gTR7I=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "dan@dan.com",
+            "first_name": "Dan",
+            "last_name": "Ross",
+            "email": "dan@dan.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2020-10-28T14:51:39.989Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$216000$qMRH8szID7Z8$Vljya2V3XfruOHuvx1hGz9ZyKg4bxbw7rc2WO0gTR7I=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "joe@biden.com",
+            "first_name": "Joe",
+            "last_name": "Biden",
+            "email": "joe@biden.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2021-09-28T14:51:39.989Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    }
+]
