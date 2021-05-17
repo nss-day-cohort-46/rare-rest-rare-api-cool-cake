@@ -9,9 +9,7 @@
             "publication_date": "2016-05-18T15:37:36.993048Z",
             "image_url": "url.url",
             "content": "This is bananas",
-            "approved": true,
-            "tags": 1,
-            "reactions": 1
+            "approved": true
         }
     },
     {
@@ -24,9 +22,7 @@
             "publication_date": "2016-05-18T15:37:36.993048Z",
             "image_url": "url.url",
             "content": "This is bananas from another angle",
-            "approved": true,
-            "tags": 2,
-            "reactions": 2
+            "approved": true
         }
     },
     {
@@ -39,9 +35,7 @@
             "publication_date": "2016-05-18T15:37:36.993048Z",
             "image_url": "doge.url",
             "content": "Dogecoin",
-            "approved": true,
-            "tags": 2,
-            "reactions": 1
+            "approved": true
         }
     }
 ]
