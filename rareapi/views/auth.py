@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from rareapi.models import RareUser, RareUser
+from django.utils import timezone
 from datetime import datetime
 
 @csrf_exempt
@@ -55,7 +56,8 @@ def register_user(request):
         bio=req_body['bio'],
         user=new_user,
         profile_image_url=['profileImageUrl'],
-        created_on=datetime.now()
+        created_on=datetime.now(tz=timezone.utc),
+        active=True
     )
 
     # Commit the user to the database by saving it
