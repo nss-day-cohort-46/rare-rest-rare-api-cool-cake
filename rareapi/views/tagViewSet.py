@@ -18,6 +18,7 @@ class TagViewSet(ViewSet):
 
         Tag ViewSet
     """
+
     def retrieve(self, request, pk=None):
         """
             Handle GET requests for single tag.
@@ -35,7 +36,6 @@ class TagViewSet(ViewSet):
         except Exception as ex:
             return HttpResponseServerError(ex)
 
-
     def list(self, request):
         """
             Handle GET requests to get all tag resources.
@@ -43,7 +43,7 @@ class TagViewSet(ViewSet):
                 Response : JSON serialized list of tag types.
         """
 
-        tags = Tag.objects.all()
+        tags = Tag.objects.all().order_by('label')
 
         # filter tags by type
         # http://localhost:8000/tags?type=1
