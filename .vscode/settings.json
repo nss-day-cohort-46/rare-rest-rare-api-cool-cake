@@ -8,5 +8,6 @@
       "name": "rare serever",
       "database": "db.sqlite3"
     }
-  ]
+  ],
+  "python.pythonPath": "/Users/danielross/.local/share/virtualenvs/rare-rest-rare-api-cool-cake-4Mhb6bl2/bin/python"
 }
