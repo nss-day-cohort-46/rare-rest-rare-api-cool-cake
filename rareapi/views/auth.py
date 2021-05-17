@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from rareapi.models import RareUser, RareUser
+from datetime import datetime
 
 @csrf_exempt
 def login_user(request):
@@ -52,7 +53,9 @@ def register_user(request):
     # Now save the extra info in the levelupapi_gamer table
     rareuser = RareUser.objects.create(
         bio=req_body['bio'],
-        user=new_user
+        user=new_user,
+        profile_image_url=['profileImageUrl'],
+        created_on=
     )
 
     # Commit the user to the database by saving it
