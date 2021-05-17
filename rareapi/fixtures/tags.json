@@ -1,0 +1,79 @@
+[
+    {
+        "model": "rareapi.tag",
+        "pk": 1,
+        "fields": {
+            "label": "strategy"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 2,
+        "fields": {
+            "label": "dice"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 3,
+        "fields": {
+            "label": "card"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 4,
+        "fields": {
+            "label": "miniature"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 5,
+        "fields": {
+            "label": "deck building"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 6,
+        "fields": {
+            "label": "role playing"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 7,
+        "fields": {
+            "label": "sports"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 8,
+        "fields": {
+            "label": "adventure"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 9,
+        "fields": {
+            "label": "cooperative"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 10,
+        "fields": {
+            "label": "battle"
+        }
+    },
+    {
+        "model": "rareapi.tag",
+        "pk": 11,
+        "fields": {
+            "label": "mosh pit"
+        }
+    }
+]
