@@ -1,0 +1,47 @@
+[
+    {
+        "model": "rareapi.post",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "category": 1,
+            "title": "My first post",
+            "publication_date": "2016-05-18T15:37:36.993048Z",
+            "image_url": "url.url",
+            "content": "This is bananas",
+            "approved": true,
+            "tags": 1,
+            "reactions": 1
+        }
+    },
+    {
+        "model": "rareapi.post",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "category": 2,
+            "title": "User 2 first post",
+            "publication_date": "2016-05-18T15:37:36.993048Z",
+            "image_url": "url.url",
+            "content": "This is bananas from another angle",
+            "approved": true,
+            "tags": 2,
+            "reactions": 2
+        }
+    },
+    {
+        "model": "rareapi.post",
+        "pk": 3,
+        "fields": {
+            "user": 1,
+            "category": 2,
+            "title": "My second post",
+            "publication_date": "2016-05-18T15:37:36.993048Z",
+            "image_url": "doge.url",
+            "content": "Dogecoin",
+            "approved": true,
+            "tags": 2,
+            "reactions": 1
+        }
+    }
+]
