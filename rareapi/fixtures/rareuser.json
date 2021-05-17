@@ -1,0 +1,35 @@
+[
+    {
+        "model": "rareapi.rareuser",
+        "pk": 1,
+        "fields": {
+            "bio": "Head coach",
+            "profile_image_url": "https://avatars.githubusercontent.com/u/218592?v=4",
+            "created_on": "2020-08-28T14:51:39.989Z",
+            "active": true,
+            "user": 1
+        }
+    },
+    {
+        "model": "rareapi.rareuser",
+        "pk": 2,
+        "fields": {
+            "bio": "A dog who learned how to type.",
+            "profile_image_url": "https://thesciencedog.files.wordpress.com/2013/09/golden-retriever-and-science1.jpg",
+            "created_on": "2020-08-28T14:51:39.989Z",
+            "active": true,
+            "user": 2
+        }
+    },
+    {
+        "model": "rareapi.rareuser",
+        "pk": 3,
+        "fields": {
+            "bio": "POTUS",
+            "profile_image_url": "https://www.whitehouse.gov/wp-content/uploads/2021/04/P20210303AS-1901-cropped-1707x1280.jpg",
+            "created_on": "2020-01-14T14:51:39.989Z",
+            "active": true,
+            "user": 3
+        }
+    }
+]
