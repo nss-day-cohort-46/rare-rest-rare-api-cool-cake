@@ -1,3 +1,4 @@
+from django.http.response import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -49,10 +50,17 @@ class Comments(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-
-
-
-
+    def retrieve(self, request, pk=None):
+        try:
+            comments = Comment.objects.all()
+            post = Post.objects.get(pk=pk)
+            comments = comments.filter(post = post)
+            serializer = CommentSerializer(
+            comments, many=True, context={'request': request}
+            )
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)        
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
