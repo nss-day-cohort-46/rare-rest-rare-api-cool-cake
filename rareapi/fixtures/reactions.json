@@ -1,6 +1,6 @@
 [
     {
-        "model": "rareapi.rareuser",
+        "model": "rareapi.reaction",
         "pk": 1,
         "fields": {
             "label": "Thumbs-up",
@@ -8,7 +8,7 @@
         }
     },
     {
-        "model":"rareapi.rareuser",
+        "model":"rareapi.reaction",
         "pk": 2,
         "fields": {
             "label": "Thumbs-down",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "model":"rareapi.rareuser",
+        "model":"rareapi.reaction",
         "pk": 3,
         "fields": {
             "label": "Heart",
