@@ -20,10 +20,8 @@ from django.urls import path
 
 from rest_framework import routers
 
-from rareapi.views import Comments, Reactions
+from rareapi.views import CategoryViewSet, Comments, Reactions, TagViewSet
 from rareapi.views import register_user, login_user
-from rareapi.views import TagViewSet
-from rareapi.views import CategoryViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'categories', CategoryViewSet, 'category')
