@@ -44,10 +44,9 @@ class PostView(ViewSet):
         serializer = PostSerializer(
             post, many=True, context={'request': request})
         return Response(serializer.data)
-    
+
     def create(self, request):
         """Handle POST operations
-
         Returns:
             Response -- JSON serialized game instance
         """
@@ -77,14 +76,17 @@ class PostView(ViewSet):
 
     def update(self, request, pk=None):
         """Handle PUT requests for a game
-
         Returns:
             Response -- Empty body with 204 status code
         """
         user = RareUser.objects.get(user=request.auth.user)
         category = Category.objects.get(pk = request.data["categoryId"])
-
         post = Post.objects.get(pk=pk)
+
+
+        if user is not post.user:
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
+
         post.user = user
         post.category = category
         post.title = request.data["title"]
@@ -100,8 +102,12 @@ class PostView(ViewSet):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
+
         try:
             post = Post.objects.get(pk=pk)
+            user = RareUser.objects.get(user=request.auth.user)
+            if user is not post.user:
+                return Response({}, status=status.HTTP_403_FORBIDDEN)
             post.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
@@ -111,14 +117,22 @@ class PostView(ViewSet):
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# class UserSerializer(serializers.ModelSerializer):
+#     """JSON serializer for gamer's related Django user"""
+#     class Meta:
+#         model = User
+#         fields = ('first_name', 'last_name')
+
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
 
     Arguments:
         serializer type
     """
+    # user = UserSerializer(many=False)
+
     class Meta:
         model = Post
         fields = ('id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content', 'approved', 'tags', 'reactions' )
+        depth = 1
         
-  
