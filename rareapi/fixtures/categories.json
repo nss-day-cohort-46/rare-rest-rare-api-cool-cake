@@ -19,5 +19,12 @@
     "fields": {
       "label": "Sports"
     }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 5,
+    "fields": {
+      "label": "Albaross"
+    }
   }
 ]
