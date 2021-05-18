@@ -1,6 +1,7 @@
 """Tag ViewSet"""
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
+from django.db.models.functions import Lower
 
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -8,6 +9,8 @@ from rest_framework import status
 
 from .tagSerializer import TagSerializer
 from rareapi.models import Tag
+
+from rareapi.models import RareUser
 
 
 class TagViewSet(ViewSet):
@@ -18,6 +21,25 @@ class TagViewSet(ViewSet):
 
         Tag ViewSet
     """
+
+    def create(self, request):
+        """
+            Handle POST requests for tags.
+            Returns:
+                Response -- JSON serialized even instance.
+        """
+
+        user = RareUser.objects.get(user=request.auth.user)
+
+        tag = Tag()
+        tag.label = request.data['label']
+
+        try:
+            tag.save()
+            serialized_tag = TagSerializer(tag, context={'request': request})
+            return Response(serialized_tag.data)
+        except ValidationError as ex:
+            return Response({"reason": ex.message}, status=status.HTTP_404_NOT_FOUND)
 
     def retrieve(self, request, pk=None):
         """
@@ -43,7 +65,7 @@ class TagViewSet(ViewSet):
                 Response : JSON serialized list of tag types.
         """
 
-        tags = Tag.objects.all().order_by('label')
+        tags = Tag.objects.all().order_by(Lower('label'))
 
         # filter tags by type
         # http://localhost:8000/tags?type=1
