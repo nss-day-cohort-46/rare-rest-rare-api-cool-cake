@@ -3,12 +3,13 @@ from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
 from rareapi.views import (Comments, Reactions, TagViewSet, 
-                            register_user, login_user)
+                            PostView,register_user, login_user)
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'comments', Comments, 'comment')
 router.register(r'reactions', Reactions, 'reaction')
 router.register(r'tags', TagViewSet, 'tag')
+router.register(r'posts', PostView, 'post')
 
 
 urlpatterns = [
