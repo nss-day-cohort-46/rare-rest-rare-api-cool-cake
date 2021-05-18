@@ -5,5 +5,19 @@
     "fields": {
       "label": "News"
     }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 2,
+    "fields": {
+      "label": "Foods"
+    }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 3,
+    "fields": {
+      "label": "Sports"
+    }
   }
 ]
