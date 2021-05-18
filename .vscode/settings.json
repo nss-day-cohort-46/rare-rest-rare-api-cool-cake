@@ -12,6 +12,6 @@
       "database": "db.sqlite3"
     }
   ],
-  "python.pythonPath": "/home/cheo/.virtualenvs/rare-rest-rare-api-cool-cake-reUEtUf5/bin/python",
+  "python.pythonPath": "/Users/danielross/.local/share/virtualenvs/rare-rest-rare-api-cool-cake-4Mhb6bl2/bin/python",
   "sqltools.useNodeRuntime": true
 }
