@@ -41,11 +41,11 @@ class PostView(ViewSet):
             post, many=True, context={'request': request})
         return Response(serializer.data)
 
-class UserSerializer(serializers.ModelSerializer):
-    """JSON serializer for gamer's related Django user"""
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name')
+# class UserSerializer(serializers.ModelSerializer):
+#     """JSON serializer for gamer's related Django user"""
+#     class Meta:
+#         model = User
+#         fields = ('first_name', 'last_name')
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
@@ -53,7 +53,7 @@ class PostSerializer(serializers.ModelSerializer):
     Arguments:
         serializer type
     """
-    user = UserSerializer(many=False)
+    # user = UserSerializer(many=False)
 
     class Meta:
         model = Post
