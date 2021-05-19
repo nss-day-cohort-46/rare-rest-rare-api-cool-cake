@@ -39,9 +39,7 @@ class PostView(ViewSet):
             Response -- JSON serialized list of game types
         """
         post = Post.objects.all()
-
         user = request.query_params.get('user_id', None)
-
         if user is not None:
             post = post.filter(user__id=user)
         
@@ -59,7 +57,7 @@ class PostView(ViewSet):
             Response -- JSON serialized game instance
         """
         # Uses the token passed in the `Authorization` header
-        user = RareUser.objects.get(user=request.auth.user)
+        user = request.auth.user
         category = Category.objects.get(pk = request.data["categoryId"])
         # tags = PostTag.objects.get(pk=request.data["tagId"])
         # reactions = PostReaction.objects.get(pk=request.data["reactionId"])
@@ -87,12 +85,12 @@ class PostView(ViewSet):
         Returns:
             Response -- Empty body with 204 status code
         """
-        user = RareUser.objects.get(user=request.auth.user)
+        user = request.auth.user
         category = Category.objects.get(pk = request.data["categoryId"])
         post = Post.objects.get(pk=pk)
 
 
-        if user is not post.user:
+        if user != post.user:
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         post.user = user
