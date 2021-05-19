@@ -1,3 +1,5 @@
+from rareapi.views.post import PostView
+from django import urls
 """rare URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,22 +15,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
-from rareapi.views import register_user, login_user
 from rest_framework import routers
-from rareapi.views import Comments, Reactions
+from rareapi.views import register_user, login_user
+from rareapi.views.tagViewSet import TagViewSet
+from rareapi.views import Comments, Reactions, PostView
 
 router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'posts', PostView, 'post')
 router.register(r'comments', Comments, 'comment')
 router.register(r'reactions', Reactions, 'reaction')
+router.register(r'tags', TagViewSet, 'tag')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     path('register', register_user),
     path('login', login_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
-
 ]
