@@ -24,7 +24,6 @@ from rest_framework import routers
 from rareapi.views import register_user, login_user
 from rareapi.views import CategoryViewSet, Comments, PostView, Reactions, TagViewSet
 
-
 router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'categories', CategoryViewSet, 'category')
