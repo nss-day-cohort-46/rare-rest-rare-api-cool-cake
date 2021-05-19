@@ -7,6 +7,8 @@ from rest_framework import serializers
 from rest_framework import status
 from rareapi.models import Post
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
+
 
 
 
@@ -40,6 +42,30 @@ class PostView(ViewSet):
         serializer = PostSerializer(
             post, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @action(methods=["put"], detail=True)
+    def approve(self, request, pk=None):
+        """Managing admin approving post"""
+
+        user = request.auth.user
+        if not user.is_staff:
+            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+
+        if request.method == "PUT":
+            post = Post.objects.get(pk=pk)
+
+            if post.approved:
+                return Response({}, status=status.HTTP_304_NOT_MODIFIED)
+
+            try:    
+                post.approved = True
+                post.save()
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+            except:
+                return Response(
+                    {'message': 'Post does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
 # class UserSerializer(serializers.ModelSerializer):
 #     """JSON serializer for gamer's related Django user"""
