@@ -2,12 +2,15 @@
 from django.http import HttpResponseServerError
 from django.db.models.functions import Lower
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
 
 from .categorySerializer import CategorySerializer
 from rareapi.models import Category
+
+from rareapi.models import RareUser
 
 
 class CategoryViewSet(ViewSet):
@@ -18,6 +21,24 @@ class CategoryViewSet(ViewSet):
 
         Category ViewSet
     """
+
+    def create(self, request):
+        """
+            Handle POST requests for tags.
+            Returns:
+                Response -- JSON serialized even instance.
+        """
+
+        category = Category()
+        category.label = request.data['label']
+
+        try:
+            category.save()
+            serialized_category = CategorySerializer(
+                category, context={'request': request})
+            return Response(serialized_category.data)
+        except ValidationError as ex:
+            return Response({'reason': ex.message}, status=status.HTTP_404_NOT_FOUND)
 
     def retrieve(self, request, pk=None):
         """
