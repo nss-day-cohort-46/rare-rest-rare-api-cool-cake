@@ -111,10 +111,11 @@ class PostView(ViewSet):
 
     def destroy(self, request, pk=None):
 
+
         try:
             post = Post.objects.get(pk=pk)
             user = RareUser.objects.get(user=request.auth.user)
-            if user is not post.user:
+            if user.user_id != post.user.id:
                 return Response({}, status=status.HTTP_403_FORBIDDEN)
             post.delete()
 
