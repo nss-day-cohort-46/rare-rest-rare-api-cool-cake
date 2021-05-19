@@ -28,6 +28,7 @@ router.register(r'categories', CategoryViewSet, 'category')
 router.register(r'comments', Comments, 'comment')
 router.register(r'reactions', Reactions, 'reaction')
 router.register(r'tags', TagViewSet, 'tag')
+router.register(r'posts', PostView, 'post')
 
 urlpatterns = [
     path('', include(router.urls)),
