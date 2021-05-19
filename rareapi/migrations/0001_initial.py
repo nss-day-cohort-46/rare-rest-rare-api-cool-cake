@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rareapi.rareuser'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
         migrations.CreateModel(
             name='DemotionQueue',
