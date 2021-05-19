@@ -12,6 +12,7 @@ from rest_framework import serializers
 from rest_framework import status
 from rareapi.models import Post, RareUser
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 
 
@@ -38,10 +39,17 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        post = Post.objects.all()
-        user = request.query_params.get('user_id', None)
-        if user is not None:
-            post = post.filter(user__id=user)
+        user = request.auth.user
+        if user.is_staff is True:
+            post = Post.objects.all()
+            user = request.query_params.get('user_id', None)
+            if user is not None:
+                post = post.filter(user__id=user)
+        
+        elif user.is_staff is False:
+            date_thresh = datetime.now()
+            post = Post.objects.all().filter(approved=True).filter(publication_date__lt=date_thresh)
+            
         
         # # Note the additional `many=True` argument to the
         # # serializer. It's needed when you are serializing
