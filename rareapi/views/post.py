@@ -1,4 +1,5 @@
 """View module for handling requests about games"""
+from rareapi.models.comment import Comment
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
@@ -7,8 +8,7 @@ from rest_framework import serializers
 from rest_framework import status
 from rareapi.models import Post
 from django.contrib.auth.models import User
-
-
+from rest_framework.decorators import action
 
 class PostView(ViewSet):
     """Rare posts"""
@@ -41,11 +41,29 @@ class PostView(ViewSet):
             post, many=True, context={'request': request})
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=True)
+    def comments(self, request, pk=None):
+        try:
+            comments = Comment.objects.all()
+            post = Post.objects.get(pk=pk)
+            comments = comments.filter(post=post)
+            serializer = CommentSerializer(
+                comments, many=True, context={'request': request}
+            )
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
+
 # class UserSerializer(serializers.ModelSerializer):
 #     """JSON serializer for gamer's related Django user"""
 #     class Meta:
 #         model = User
 #         fields = ('first_name', 'last_name')
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts

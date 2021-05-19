@@ -52,12 +52,8 @@ class Comments(ViewSet):
 
     def retrieve(self, request, pk=None):
         try:
-            comments = Comment.objects.all()
-            post = Post.objects.get(pk=pk)
-            comments = comments.filter(post = post)
-            serializer = CommentSerializer(
-            comments, many=True, context={'request': request}
-            )
+            comment = Comment.objects.get(pk=pk)
+            serializer = CommentSerializer(comment, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)        
