@@ -1,9 +1,4 @@
 """View module for handling requests about games"""
-from rareapi.models.comment import Comment
-from rareapi.models.postreaction import PostReaction
-from rareapi.models.posttag import PostTag
-from rareapi.models.reaction import Reaction
-from rareapi.models.tag import Tag
 from rareapi.models.category import Category
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import action
@@ -13,7 +8,9 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
-from rareapi.models import Post, RareUser, PostReaction, Reaction
+from rareapi.models import (Post, RareUser, PostReaction, 
+                            Reaction, Comment, PostTag, 
+                            Tag)
 
 
 
@@ -175,7 +172,6 @@ class PostView(ViewSet):
 
     def destroy(self, request, pk=None):
 
-
         try:
             post = Post.objects.get(pk=pk)
             user = RareUser.objects.get(user=request.auth.user)
@@ -189,6 +185,30 @@ class PostView(ViewSet):
 
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=["put"], detail=True)
+    def approve(self, request, pk=None):
+        """Managing admin approving post"""
+
+        user = request.auth.user
+        if not user.is_staff:
+            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+
+        if request.method == "PUT":
+            post = Post.objects.get(pk=pk)
+
+            if post.approved:
+                return Response({}, status=status.HTTP_304_NOT_MODIFIED)
+
+            try:    
+                post.approved = True
+                post.save()
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+            except:
+                return Response(
+                    {'message': 'Post does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
