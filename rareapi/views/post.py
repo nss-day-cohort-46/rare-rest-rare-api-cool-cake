@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from rareapi.models import Post, RareUser
+from django.contrib.auth.models import User
+
 
 
 
@@ -38,9 +40,15 @@ class PostView(ViewSet):
         """
         post = Post.objects.all()
 
-        # Note the additional `many=True` argument to the
-        # serializer. It's needed when you are serializing
-        # a list of objects instead of a single object.
+        user = request.query_params.get('user_id', None)
+
+        if user is not None:
+            post = post.filter(user__id=user)
+        
+        # # Note the additional `many=True` argument to the
+        # # serializer. It's needed when you are serializing
+        # # a list of objects instead of a single object.
+        
         serializer = PostSerializer(
             post, many=True, context={'request': request})
         return Response(serializer.data)
@@ -117,11 +125,11 @@ class PostView(ViewSet):
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# class UserSerializer(serializers.ModelSerializer):
-#     """JSON serializer for gamer's related Django user"""
-#     class Meta:
-#         model = User
-#         fields = ('first_name', 'last_name')
+class UserSerializer(serializers.ModelSerializer):
+    """JSON serializer for gamer's related Django user"""
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
@@ -129,7 +137,7 @@ class PostSerializer(serializers.ModelSerializer):
     Arguments:
         serializer type
     """
-    # user = UserSerializer(many=False)
+    user = UserSerializer(many=False)
 
     class Meta:
         model = Post
