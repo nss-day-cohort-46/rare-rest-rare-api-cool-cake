@@ -10,4 +10,4 @@ class Post(models.Model):
     approved = models.BooleanField()
     tags = models.ManyToManyField("Tag", through="PostTag", related_name="tags")
     reactions = models.ManyToManyField("Reaction", through="PostReaction", related_name="reactions")
-  
+    
