@@ -24,6 +24,8 @@ from rareapi.views import register_user, login_user
 from rareapi.views.tagViewSet import TagViewSet
 from rareapi.views import Comments, Reactions, PostView
 
+from rareapi.views import Comments, Reactions
+
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'posts', PostView, 'post')
 router.register(r'comments', Comments, 'comment')
