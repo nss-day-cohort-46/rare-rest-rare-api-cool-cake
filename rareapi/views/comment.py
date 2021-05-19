@@ -25,7 +25,8 @@ class Comments(ViewSet):
     
     def destroy(self, request, pk=None):
         try:
-            comment = Comment.objects.get(pk=pk)
+            author = RareUser.objects.get(user = request.auth.user)
+            comment = Comment.objects.get(pk=pk, author=author)
             comment.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
