@@ -37,16 +37,20 @@ class Comments(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, pk=None):
-        comment = Comment.objects.get(pk=pk)
-        author = RareUser.objects.get(user=request.auth.user)
-        post = Post.objects.get(pk = request.data["postId"])
+        try:
+            author = RareUser.objects.get(user=request.auth.user)
+            comment = Comment.objects.get(pk=pk, author=author)
+            post = Post.objects.get(pk = request.data["postId"])
 
-        comment.content = request.data["content"]
-        comment.created_on = request.data["createdOn"]
-        comment.author = author
-        comment.post = post
+            comment.content = request.data["content"]
+            comment.created_on = request.data["createdOn"]
+            comment.author = author
+            comment.post = post
 
-        comment.save()
+            comment.save()
+            
+        except Comment.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
