@@ -66,6 +66,7 @@ class TagViewSet(ViewSet):
         """
 
         tags = Tag.objects.all().order_by(Lower('label'))
+        user = request.auth.user
 
         # filter tags by type
         # http://localhost:8000/tags?type=1
@@ -95,10 +96,16 @@ class TagViewSet(ViewSet):
 
         try:
             tag = Tag.objects.get(pk=pk)
-            tag.delete()
+            user = request.auth.user
+            if user.is_staff:
+                tag.delete()
 
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
-        
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            else:
+                print('user is not staff')
+                return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
         except Tag.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
