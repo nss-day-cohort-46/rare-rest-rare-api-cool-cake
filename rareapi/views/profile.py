@@ -38,6 +38,9 @@ class ProfileView(ViewSet):
             user = User.objects.get(pk=pk)
             profile = RareUser.objects.get(pk=pk)
             profile.user = user
+
+            if profile.profile_image_url == "['profileImageUrl']":
+                profile.profile_image_url = "https://thesciencedog.files.wordpress.com/2013/09/golden-retriever-and-science1.jpg"
             serializer = RareUserSerializer(profile, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
