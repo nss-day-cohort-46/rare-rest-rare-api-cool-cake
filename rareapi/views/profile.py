@@ -37,7 +37,9 @@ class ProfileView(ViewSet):
         try:
             user = User.objects.get(pk=pk)
             profile = RareUser.objects.get(pk=pk)
-            serializer = RareUserSerializer()
+            profile.user = user
+            serializer = RareUserSerializer(profile, context={'request': request})
+            return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
 
@@ -46,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'is_staff')
+        fields = ('id', 'first_name', 'last_name', 'username', 'is_staff')
 
 
 class RareUserSerializer(serializers.ModelSerializer):
