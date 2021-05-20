@@ -66,6 +66,7 @@ class TagViewSet(ViewSet):
         """
 
         tags = Tag.objects.all().order_by(Lower('label'))
+        user = request.auth.user
 
         # filter tags by type
         # http://localhost:8000/tags?type=1
@@ -85,3 +86,27 @@ class TagViewSet(ViewSet):
         )
 
         return Response(serialized_tags.data)
+
+    def destroy(self, request, pk=None):
+        """
+            Handle DELETE request for a single tag.
+            Returns:
+                Response - 200, 204, 500 status code.
+        """
+
+        try:
+            tag = Tag.objects.get(pk=pk)
+            user = request.auth.user
+            if user.is_staff:
+                tag.delete()
+
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            else:
+                print('user is not staff')
+                return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Tag.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
