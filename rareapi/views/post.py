@@ -8,13 +8,10 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
-<<<<<<< HEAD
 from datetime import datetime, timedelta
-=======
 from rareapi.models import (Post, RareUser, PostReaction, 
                             Reaction, Comment, PostTag, 
                             Tag)
->>>>>>> main
 
 
 
