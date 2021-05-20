@@ -1,0 +1,17 @@
+{
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintArgs": [
+    "--django-settings-module=levelup.settings",
+  ],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "db",
+      "database": "db.sqlite3"
+    }
+],
+  "sqltools.useNodeRuntime": true,
+  "python.pythonPath": "/Users/danielross/.local/share/virtualenvs/rare-rest-rare-api-cool-cake-4Mhb6bl2/bin/python"
+}

@@ -1,3 +1,4 @@
+from django.http.response import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -25,7 +26,8 @@ class Comments(ViewSet):
     
     def destroy(self, request, pk=None):
         try:
-            comment = Comment.objects.get(pk=pk)
+            author = RareUser.objects.get(user = request.auth.user)
+            comment = Comment.objects.get(pk=pk, author=author)
             comment.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
@@ -36,23 +38,30 @@ class Comments(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, pk=None):
-        comment = Comment.objects.get(pk=pk)
-        author = RareUser.objects.get(user=request.auth.user)
-        post = Post.objects.get(pk = request.data["postId"])
+        try:
+            author = RareUser.objects.get(user=request.auth.user)
+            comment = Comment.objects.get(pk=pk, author=author)
+            post = Post.objects.get(pk = request.data["postId"])
 
-        comment.content = request.data["content"]
-        comment.created_on = request.data["createdOn"]
-        comment.author = author
-        comment.post = post
+            comment.content = request.data["content"]
+            comment.created_on = request.data["createdOn"]
+            comment.author = author
+            comment.post = post
 
-        comment.save()
+            comment.save()
+            
+        except Comment.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-
-
-
-
+    def retrieve(self, request, pk=None):
+        try:
+            comment = Comment.objects.get(pk=pk)
+            serializer = CommentSerializer(comment, context={'request': request})
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)        
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

@@ -5,5 +5,26 @@
     "fields": {
       "label": "News"
     }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 2,
+    "fields": {
+      "label": "Foods"
+    }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 3,
+    "fields": {
+      "label": "Sports"
+    }
+  },
+    {
+    "model": "rareapi.category",
+    "pk": 5,
+    "fields": {
+      "label": "Albaross"
+    }
   }
 ]
