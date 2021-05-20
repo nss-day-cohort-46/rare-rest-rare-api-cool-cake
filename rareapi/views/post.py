@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 from rareapi.models import (Post, RareUser, PostReaction, 
                             Reaction, Comment, PostTag, 
                             Tag)
@@ -37,11 +38,20 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        post = Post.objects.all()
-        user = request.query_params.get('user_id', None)
-        if user is not None:
-            post = post.filter(user__id=user)
-        
+        user = request.auth.user
+        if user.is_staff is True:
+            post = Post.objects.all()
+            
+        elif user.is_staff is False:
+            date_thresh = datetime.now()
+            post = Post.objects.all().filter(approved=True).filter(publication_date__lt=date_thresh)
+
+        user_id = request.query_params.get('user_id', None)
+        if user_id is not None and user_id == str(user.id):
+                post = Post.objects.all()
+                post = post.filter(user__id=user_id)
+        if user_id is not None and user_id != str(user.id):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
         # # Note the additional `many=True` argument to the
         # # serializer. It's needed when you are serializing
         # # a list of objects instead of a single object.
@@ -63,7 +73,7 @@ class PostView(ViewSet):
                 )
                 return Response(
                     {'message': 'User already used this reaction.'},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                    status=status.HTTP_204_NO_CONTENT
                 )
             except PostReaction.DoesNotExist:
                 reacting = PostReaction()
