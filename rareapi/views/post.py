@@ -65,7 +65,7 @@ class PostView(ViewSet):
                 )
                 return Response(
                     {'message': 'User already used this reaction.'},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                    status=status.HTTP_204_NO_CONTENT
                 )
             except PostReaction.DoesNotExist:
                 reacting = PostReaction()
