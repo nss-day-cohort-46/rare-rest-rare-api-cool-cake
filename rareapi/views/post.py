@@ -1,8 +1,4 @@
 """View module for handling requests about games"""
-from rareapi.models.postreaction import PostReaction
-from rareapi.models.posttag import PostTag
-from rareapi.models.reaction import Reaction
-from rareapi.models.tag import Tag
 from rareapi.models.category import Category
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import action
@@ -11,8 +7,11 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from rareapi.models import Post, RareUser, PostReaction, Reaction
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
+from rareapi.models import (Post, RareUser, PostReaction, 
+                            Reaction, Comment, PostTag, 
+                            Tag)
 
 
 
@@ -39,11 +38,20 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        post = Post.objects.all()
-        user = request.query_params.get('user_id', None)
-        if user is not None:
-            post = post.filter(user__id=user)
-        
+        user = request.auth.user
+        if user.is_staff is True:
+            post = Post.objects.all()
+            
+        elif user.is_staff is False:
+            date_thresh = datetime.now()
+            post = Post.objects.all().filter(approved=True).filter(publication_date__lt=date_thresh)
+
+        user_id = request.query_params.get('user_id', None)
+        if user_id is not None and user_id == str(user.id):
+                post = Post.objects.all()
+                post = post.filter(user__id=user_id)
+        if user_id is not None and user_id != str(user.id):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
         # # Note the additional `many=True` argument to the
         # # serializer. It's needed when you are serializing
         # # a list of objects instead of a single object.
@@ -103,6 +111,19 @@ class PostView(ViewSet):
 
         return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    @action(methods=['get'], detail=True)
+    def comments(self, request, pk=None):
+        try:
+            comments = Comment.objects.all()
+            post = Post.objects.get(pk=pk)
+            comments = comments.filter(post=post)
+            serializer = CommentSerializer(
+                comments, many=True, context={'request': request}
+            )
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
     def create(self, request):
         """Handle POST operations
         Returns:
@@ -161,7 +182,6 @@ class PostView(ViewSet):
 
     def destroy(self, request, pk=None):
 
-
         try:
             post = Post.objects.get(pk=pk)
             user = RareUser.objects.get(user=request.auth.user)
@@ -175,6 +195,35 @@ class PostView(ViewSet):
 
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=["put"], detail=True)
+    def approve(self, request, pk=None):
+        """Managing admin approving post"""
+
+        user = request.auth.user
+        if not user.is_staff:
+            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+
+        if request.method == "PUT":
+            post = Post.objects.get(pk=pk)
+
+            if post.approved:
+                return Response({}, status=status.HTTP_304_NOT_MODIFIED)
+
+            try:    
+                post.approved = True
+                post.save()
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+            except:
+                return Response(
+                    {'message': 'Post does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for gamer's related Django user"""

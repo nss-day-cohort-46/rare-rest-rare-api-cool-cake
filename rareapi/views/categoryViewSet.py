@@ -1,8 +1,8 @@
 """Category ViewSet"""
 from django.http import HttpResponseServerError
 from django.db.models.functions import Lower
-from rest_framework.exceptions import ValidationError
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status

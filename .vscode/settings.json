@@ -4,6 +4,13 @@
   "python.linting.pylintArgs": [
     "--django-settings-module=levelup.settings",
   ],
-  "sqltools.connections": [],
-  "sqltools.useNodeRuntime": true
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "db",
+      "database": "db.sqlite3"
+    }
+],
+"sqltools.useNodeRuntime": true
 }
