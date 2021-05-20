@@ -24,7 +24,7 @@ class CategoryViewSet(ViewSet):
 
     def create(self, request):
         """
-            Handle POST requests for tags.
+            Handle POST requests for categories.
             Returns:
                 Response -- JSON serialized even instance.
         """
@@ -71,3 +71,26 @@ class CategoryViewSet(ViewSet):
             return Response(serialzied_categories.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+
+    def destroy(self, request, pk=None):
+        """
+            Handle DELETE request for a single category.
+            Returns:
+                Response - 200, 204, 500 status code.
+        """
+
+        try:
+            category = Category.objects.get(pk=pk)
+            user = request.auth.user
+            if user.is_staff:
+                category.delete()
+
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            else:
+                return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Category.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
