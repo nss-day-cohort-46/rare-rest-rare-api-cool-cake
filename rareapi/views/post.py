@@ -42,15 +42,17 @@ class PostView(ViewSet):
         user = request.auth.user
         if user.is_staff is True:
             post = Post.objects.all()
-            user = request.query_params.get('user_id', None)
-            if user is not None:
-                post = post.filter(user__id=user)
-        
+            
         elif user.is_staff is False:
             date_thresh = datetime.now()
             post = Post.objects.all().filter(approved=True).filter(publication_date__lt=date_thresh)
-            
-        
+
+        user_id = request.query_params.get('user_id', None)
+        if user_id is not None and user_id == str(user.id):
+                post = Post.objects.all()
+                post = post.filter(user__id=user_id)
+        if user_id is not None and user_id != str(user.id):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
         # # Note the additional `many=True` argument to the
         # # serializer. It's needed when you are serializing
         # # a list of objects instead of a single object.
