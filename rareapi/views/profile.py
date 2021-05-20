@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.models import User
+from django.db.models.functions import Lower
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ class ProfileView(ViewSet):
             data = json.dumps({"admin":False})
             return Response(data, content_type='application/json', status=status.HTTP_403_FORBIDDEN)
 
-        users = User.objects.all()
+        users = User.objects.all().order_by(Lower('first_name'))
         
         serializer = UserSerializer(
             users, many=True, context={'request': request}
