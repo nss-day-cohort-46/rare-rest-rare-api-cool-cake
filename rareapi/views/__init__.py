@@ -7,3 +7,4 @@ from .categorySerializer import CategorySerializer
 from .tagViewSet import TagViewSet
 from .tagSerializer import TagSerializer
 from .reaction import Reactions
+from .profile import ProfileView

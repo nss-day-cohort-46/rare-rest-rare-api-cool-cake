@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
-from datetime import datetime, timedelta
+from datetime import date, datetime
 from rareapi.models import (Post, RareUser, PostReaction, 
                             Reaction, Comment, PostTag, 
                             Tag)
@@ -139,10 +139,10 @@ class PostView(ViewSet):
         post.user = user
         post.category = category
         post.title = request.data["title"]
-        post.publication_date = request.data["publishedOn"]
+        post.publication_date = datetime.now()
         post.image_url = request.data["imageUrl"]
         post.content = request.data["content"]
-        post.approved = request.data["approved"]
+        post.approved = False
         # post.tags = tags
         # post.reactions = reactions
 
@@ -159,7 +159,7 @@ class PostView(ViewSet):
             Response -- Empty body with 204 status code
         """
         user = request.auth.user
-        category = Category.objects.get(pk = request.data["categoryId"])
+        # category = Category.objects.get(pk = request.data["categoryId"])
         post = Post.objects.get(pk=pk)
 
 
@@ -167,12 +167,12 @@ class PostView(ViewSet):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         post.user = user
-        post.category = category
+        post.category = Category.objects.get(pk = request.data["categoryId"])
         post.title = request.data["title"]
-        post.publication_date = request.data["publishedOn"]
+        
         post.image_url = request.data["imageUrl"]
         post.content = request.data["content"]
-        post.approved = request.data["approved"]
+        
 
         post.save()
 
