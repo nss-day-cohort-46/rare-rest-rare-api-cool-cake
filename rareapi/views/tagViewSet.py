@@ -53,6 +53,9 @@ class TagViewSet(ViewSet):
             # http://localhost:8000/tags/2
             # '2' - becomes pk
             tag = Tag.objects.get(pk=pk)
+            print("pk is ", pk)
+            print("tag is")
+            print(tag)
             serialized_tag = TagSerializer(tag, context={'request': request})
             return Response(serialized_tag.data)
         except Exception as ex:
@@ -103,7 +106,39 @@ class TagViewSet(ViewSet):
                 return Response({}, status=status.HTTP_204_NO_CONTENT)
 
             else:
-                print('user is not staff')
+                return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Tag.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None):
+        """
+            Handle PUT request for a tag.
+            Returns:
+                Response -- Empty body with 204 status code.
+        """
+
+
+        # Simlar to POST.
+        # Instead of creating new instance, update exisiting record.
+        try:
+            tag = Tag.objects.get(pk=pk)
+            user = request.auth.user
+
+            print("user is ")
+            if user.is_staff:
+                print(" satff")
+                tag.label = request.data["label"]
+                tag.save()
+
+                # 204 - everything worked but server has nothing to send back
+                # in response
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            else:
+                print(" not staff ")
                 return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         except Tag.DoesNotExist as ex:
