@@ -18,6 +18,13 @@ class Reactions(ViewSet):
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_404_BAD_REQUEST)
 
+    def list(self, request):
+        reactions = Reaction.objects.all()
+        serializer = ReactionSerializer(
+            reactions, many=True, context={'request': request}
+        )
+        return Response(serializer.data)
+
 class ReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reaction
