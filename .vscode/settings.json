@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "rare",
+            "database": "db.sqlite3"
+        }
+    ],
+    "python.pythonPath": "/Users/danielprieu/.local/share/virtualenvs/rare-rest-rare-api-cool-cake-2iBYs9i6/bin/python3",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": false
+}
