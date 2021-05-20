@@ -8,13 +8,10 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
-<<<<<<< HEAD
 from datetime import datetime, timedelta
-=======
 from rareapi.models import (Post, RareUser, PostReaction, 
                             Reaction, Comment, PostTag, 
                             Tag)
->>>>>>> main
 
 
 
@@ -76,7 +73,7 @@ class PostView(ViewSet):
                 )
                 return Response(
                     {'message': 'User already used this reaction.'},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                    status=status.HTTP_204_NO_CONTENT
                 )
             except PostReaction.DoesNotExist:
                 reacting = PostReaction()
