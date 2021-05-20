@@ -150,7 +150,7 @@ class PostView(ViewSet):
             Response -- Empty body with 204 status code
         """
         user = request.auth.user
-        category = Category.objects.get(pk = request.data["categoryId"])
+        # category = Category.objects.get(pk = request.data["categoryId"])
         post = Post.objects.get(pk=pk)
 
 
@@ -158,7 +158,7 @@ class PostView(ViewSet):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         post.user = user
-        post.category = category
+        post.category = Category.objects.get(pk = request.data["categoryId"])
         post.title = request.data["title"]
         
         post.image_url = request.data["imageUrl"]
