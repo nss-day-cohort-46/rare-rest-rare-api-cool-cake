@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.core.exceptions import ValidationError
-from rareapi.models import RareUser, Comment, Post
+from rareapi.models import Comment, Post
+from django.contrib.auth.models import User
 
 class Comments(ViewSet):
     def create(self, request):
-        author = RareUser.objects.get(user = request.auth.user)
+        author = request.auth.user
         post = Post.objects.get(pk = request.data["postId"])
 
         comment = Comment()
@@ -26,7 +27,7 @@ class Comments(ViewSet):
     
     def destroy(self, request, pk=None):
         try:
-            author = RareUser.objects.get(user = request.auth.user)
+            author = request.auth.user
             comment = Comment.objects.get(pk=pk, author=author)
             comment.delete()
 
@@ -39,7 +40,7 @@ class Comments(ViewSet):
 
     def update(self, request, pk=None):
         try:
-            author = RareUser.objects.get(user=request.auth.user)
+            author = request.auth.user
             comment = Comment.objects.get(pk=pk, author=author)
             post = Post.objects.get(pk = request.data["postId"])
 
