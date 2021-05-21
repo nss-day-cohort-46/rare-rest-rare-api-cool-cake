@@ -75,17 +75,17 @@ class PostView(ViewSet):
 
         if user.is_staff:
             # tags__label - traverse nested serializer
-            if searchTerm:
+            if searchTerm != "":
                 post = Post.objects.all().order_by(
                     "-publication_date").filter(tags__label__icontains=searchTerm)
             else:
                 post = Post.objects.all().order_by(
-                    "-publication_date").filter(tags__label__icontains=searchTerm)
+                    "-publication_date")
 
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
         else:
-            if searchTerm:
+            if searchTerm != "":
                 post = Post.objects.all().order_by("-publication_date").filter(tags__label__icontains=searchTerm).filter(approved=True).filter(
                     publication_date__lt=date_thresh)
             else:
@@ -93,6 +93,7 @@ class PostView(ViewSet):
                     publication_date__lt=date_thresh)
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
+
         return Response(serialized_posts.data)
 
     @action(methods=['post', 'delete'], detail=True)
@@ -151,9 +152,9 @@ class PostView(ViewSet):
         if request.method == "POST":
             post = Post.objects.get(pk=pk)
             # user = RareUser.objects.get(user=request.auth.user)
-            tag = Tag.objects.get(pk = request.data['tagId']) 
+            tag = Tag.objects.get(pk=request.data['tagId'])
             user = request.auth.user
-            
+
             if user != post.user:
                 return Response({}, status=status.HTTP_403_FORBIDDEN)
             try:
@@ -172,7 +173,7 @@ class PostView(ViewSet):
                 tagging.save()
 
                 return Response({}, status=status.HTTP_201_CREATED)
-        
+
         elif request.method == "DELETE":
             try:
                 post = Post.objects.get(pk=pk)
@@ -183,7 +184,7 @@ class PostView(ViewSet):
                 )
 
             # user = RareUser.objects.get(user=request.auth.user)
-            tag = Tag.objects.get(pk = request.data['tagId'])
+            tag = Tag.objects.get(pk=request.data['tagId'])
 
             try:
                 reacting = PostTag.objects.get(
@@ -294,7 +295,7 @@ class PostView(ViewSet):
         if user.is_staff:
             post = Post.objects.get(pk=pk)
 
-            try:    
+            try:
                 post.approved = not post.approved
                 post.save()
                 return Response({}, status=status.HTTP_204_NO_CONTENT)
@@ -304,9 +305,7 @@ class PostView(ViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
         else:
-            return Response({}, status=status.HTTP_403_FORBIDDEN) 
-    
-
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -320,6 +319,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'username')
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(many=False)
