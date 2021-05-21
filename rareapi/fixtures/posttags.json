@@ -22,5 +22,61 @@
       "tag": 1,
       "post": 2
     }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 4,
+    "fields": {
+      "tag": 1,
+      "post": 5
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 5,
+    "fields": {
+      "tag": 1,
+      "post": 6
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 6,
+    "fields": {
+      "tag": 1,
+      "post": 2
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 7,
+    "fields": {
+      "tag": 7,
+      "post": 7
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 8,
+    "fields": {
+      "tag": 7,
+      "post":8
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 9,
+    "fields": {
+      "tag": 8,
+      "post": 2
+    }
+  },
+  {
+    "model": "rareapi.posttag",
+    "pk": 9,
+    "fields": {
+      "tag": 10,
+      "post": 2
+    }
   }
 ]
