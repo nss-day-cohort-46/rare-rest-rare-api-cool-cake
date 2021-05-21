@@ -220,16 +220,19 @@ class PostView(ViewSet):
     
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for gamer's related Django user"""
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name', 'username')
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(many=False)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
