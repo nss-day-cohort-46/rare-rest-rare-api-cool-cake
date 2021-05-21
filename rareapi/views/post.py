@@ -75,7 +75,7 @@ class PostView(ViewSet):
 
         if user.is_staff:
             # tags__label - traverse nested serializer
-            if searchTerm:
+            if searchTerm != "":
                 post = Post.objects.all().order_by(
                     "-publication_date").filter(tags__label__icontains=searchTerm)
             else:
@@ -85,7 +85,7 @@ class PostView(ViewSet):
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
         else:
-            if searchTerm:
+            if searchTerm != "":
                 post = Post.objects.all().order_by("-publication_date").filter(tags__label__icontains=searchTerm).filter(approved=True).filter(
                     publication_date__lt=date_thresh)
             else:
@@ -93,6 +93,9 @@ class PostView(ViewSet):
                     publication_date__lt=date_thresh)
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
+        print("\n= Returnning" * 20)
+        print(serialized_posts.data)
+        print("=" * 20)
         return Response(serialized_posts.data)
 
     @action(methods=['post', 'delete'], detail=True)
