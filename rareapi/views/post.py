@@ -59,6 +59,42 @@ class PostView(ViewSet):
             post, many=True, context={'request': request})
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False)
+    def filterByTag(self, request, pk=None):
+        """
+            User can filter Posts by tags.
+            http://localhost:8000/posts/filterByTag?tag=searchTerm
+
+            http://localhost:8000/posts/filterByTag?tag=strategy
+
+        """
+
+        user = request.auth.user
+        searchTerm = request.query_params.get('tag', None)
+        date_thresh = datetime.now()
+
+        if user.is_staff:
+            # tags__label - traverse nested serializer
+            if searchTerm:
+                post = Post.objects.all().order_by(
+                    "-publication_date").filter(tags__label__icontains=searchTerm)
+            else:
+                post = Post.objects.all().order_by(
+                    "-publication_date").filter(tags__label__icontains=searchTerm)
+
+            serialized_posts = PostSerializer(
+                post, many=True, context={'request': request})
+        else:
+            if searchTerm:
+                post = Post.objects.all().order_by("-publication_date").filter(tags__label__icontains=searchTerm).filter(approved=True).filter(
+                    publication_date__lt=date_thresh)
+            else:
+                post = Post.objects.all().order_by("-publication_date").filter(approved=True).filter(
+                    publication_date__lt=date_thresh)
+            serialized_posts = PostSerializer(
+                post, many=True, context={'request': request})
+        return Response(serialized_posts.data)
+
     @action(methods=['post', 'delete'], detail=True)
     def react(self, request, pk=None):
         if request.method == "POST":

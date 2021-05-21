@@ -63,5 +63,44 @@
             "content": "Dogecoin",
             "approved": true
         }
+    },
+        {
+        "model": "rareapi.post",
+        "pk": 6,
+        "fields": {
+            "user": 3,
+            "category": 1,
+            "title": "Hank is Texan",
+            "publication_date": "2022-01-01T15:37:36.993048Z",
+            "image_url": "doge.url",
+            "content": "Dogecoin",
+            "approved": false
+        }
+    },
+        {
+        "model": "rareapi.post",
+        "pk": 7,
+        "fields": {
+            "user": 1,
+            "category": 1,
+            "title": "Khan is not from the Ocean",
+            "publication_date": "2022-01-01T15:37:36.993048Z",
+            "image_url": "doge.url",
+            "content": "Dogecoin",
+            "approved": true
+        }
+    },
+        {
+        "model": "rareapi.post",
+        "pk": 8,
+        "fields": {
+            "user": 1,
+            "category": 1,
+            "title": "Mihn I also Laotian",
+            "publication_date": "2002-01-01T15:37:36.993048Z",
+            "image_url": "doge.url",
+            "content": "Dogecoin",
+            "approved": true
+        }
     }
 ]
