@@ -4,9 +4,15 @@ from rest_framework import serializers
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from rareapi.models import Reaction
+import json
 
 class Reactions(ViewSet):
     def create(self, request):
+        user = request.auth.user
+        if not user.is_staff:
+            data = json.dumps({"admin": False})
+            return Response(data, content_type='application/json', status=status.HTTP_403_FORBIDDEN)
+
         reaction = Reaction()
         reaction.label = request.data["label"]
         reaction.image_url = request.data["imageUrl"]
