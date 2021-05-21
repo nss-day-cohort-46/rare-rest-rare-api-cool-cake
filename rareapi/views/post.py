@@ -9,11 +9,9 @@ from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
 from datetime import date, datetime
-from rareapi.models import (Post, RareUser, PostReaction, 
-                            Reaction, Comment, PostTag, 
+from rareapi.models import (Post, RareUser, PostReaction,
+                            Reaction, Comment, PostTag,
                             Tag)
-
-
 
 
 class PostView(ViewSet):
@@ -40,32 +38,69 @@ class PostView(ViewSet):
         """
         user = request.auth.user
         if user.is_staff is True:
-            post = Post.objects.all()
-            
+            post = Post.objects.all().order_by("-publication_date")
+
         elif user.is_staff is False:
             date_thresh = datetime.now()
-            post = Post.objects.all().filter(approved=True).filter(publication_date__lt=date_thresh)
+            post = Post.objects.all().order_by("-publication_date").filter(approved=True).filter(
+                publication_date__lt=date_thresh)
 
         user_id = request.query_params.get('user_id', None)
         if user_id is not None and user_id == str(user.id):
-                post = Post.objects.all()
-                post = post.filter(user__id=user_id)
+            post = Post.objects.all()
+            post = post.filter(user__id=user_id)
         if user_id is not None and user_id != str(user.id):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
         # # Note the additional `many=True` argument to the
         # # serializer. It's needed when you are serializing
         # # a list of objects instead of a single object.
-        
+
         serializer = PostSerializer(
             post, many=True, context={'request': request})
         return Response(serializer.data)
-    
+
+    @action(methods=['get'], detail=False)
+    def filterByTag(self, request, pk=None):
+        """
+            User can filter Posts by tags.
+            http://localhost:8000/posts/filterByTag?tag=searchTerm
+
+            http://localhost:8000/posts/filterByTag?tag=strategy
+
+        """
+
+        user = request.auth.user
+        searchTerm = request.query_params.get('tag', None)
+        date_thresh = datetime.now()
+
+        if user.is_staff:
+            # tags__label - traverse nested serializer
+            if searchTerm:
+                post = Post.objects.all().order_by(
+                    "-publication_date").filter(tags__label__icontains=searchTerm)
+            else:
+                post = Post.objects.all().order_by(
+                    "-publication_date").filter(tags__label__icontains=searchTerm)
+
+            serialized_posts = PostSerializer(
+                post, many=True, context={'request': request})
+        else:
+            if searchTerm:
+                post = Post.objects.all().order_by("-publication_date").filter(tags__label__icontains=searchTerm).filter(approved=True).filter(
+                    publication_date__lt=date_thresh)
+            else:
+                post = Post.objects.all().order_by("-publication_date").filter(approved=True).filter(
+                    publication_date__lt=date_thresh)
+            serialized_posts = PostSerializer(
+                post, many=True, context={'request': request})
+        return Response(serialized_posts.data)
+
     @action(methods=['post', 'delete'], detail=True)
     def react(self, request, pk=None):
         if request.method == "POST":
             post = Post.objects.get(pk=pk)
             user = RareUser.objects.get(user=request.auth.user)
-            reaction = Reaction.objects.get(pk = request.data['reactionId']) 
+            reaction = Reaction.objects.get(pk=request.data['reactionId'])
 
             try:
                 reacting = PostReaction.objects.get(
@@ -83,7 +118,7 @@ class PostView(ViewSet):
                 reacting.save()
 
                 return Response({}, status=status.HTTP_201_CREATED)
-        
+
         elif request.method == "DELETE":
             try:
                 post = Post.objects.get(pk=pk)
@@ -94,7 +129,7 @@ class PostView(ViewSet):
                 )
 
             user = RareUser.objects.get(user=request.auth.user)
-            reaction = Reaction.objects.get(pk = request.data['reactionId'])
+            reaction = Reaction.objects.get(pk=request.data['reactionId'])
 
             try:
                 reacting = PostReaction.objects.get(
@@ -185,7 +220,7 @@ class PostView(ViewSet):
         """
         # Uses the token passed in the `Authorization` header
         user = request.auth.user
-        category = Category.objects.get(pk = request.data["categoryId"])
+        category = Category.objects.get(pk=request.data["categoryId"])
         # tags = PostTag.objects.get(pk=request.data["tagId"])
         # reactions = PostReaction.objects.get(pk=request.data["reactionId"])
 
@@ -216,17 +251,15 @@ class PostView(ViewSet):
         # category = Category.objects.get(pk = request.data["categoryId"])
         post = Post.objects.get(pk=pk)
 
-
         if user != post.user:
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         post.user = user
-        post.category = Category.objects.get(pk = request.data["categoryId"])
+        post.category = Category.objects.get(pk=request.data["categoryId"])
         post.title = request.data["title"]
-        
+
         post.image_url = request.data["imageUrl"]
         post.content = request.data["content"]
-        
 
         post.save()
 
@@ -255,7 +288,8 @@ class PostView(ViewSet):
         """Managing admin approving post"""
 
         user = request.auth.user
-        
+        if not user.is_staff:
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         if user.is_staff:
             post = Post.objects.get(pk=pk)
@@ -275,6 +309,12 @@ class PostView(ViewSet):
 
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
+
+
 class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for gamer's related Django user"""
     class Meta:
@@ -288,6 +328,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'post', 'author', 'content', 'created_on')
 
+
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
 
@@ -298,6 +339,6 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content', 'approved', 'tags', 'reactions' )
+        fields = ('id', 'user', 'category', 'title', 'publication_date',
+                  'image_url', 'content', 'approved', 'tags', 'reactions')
         depth = 1
-        
