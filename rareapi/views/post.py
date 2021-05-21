@@ -237,14 +237,11 @@ class PostView(ViewSet):
         if not user.is_staff:
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
-        if request.method == "PUT":
+        if user.is_staff:
             post = Post.objects.get(pk=pk)
 
-            if post.approved:
-                return Response({}, status=status.HTTP_304_NOT_MODIFIED)
-
-            try:
-                post.approved = True
+            try:    
+                post.approved = not post.approved
                 post.save()
                 return Response({}, status=status.HTTP_204_NO_CONTENT)
             except:
@@ -252,6 +249,10 @@ class PostView(ViewSet):
                     {'message': 'Post does not exist.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        else:
+            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+    
+
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -264,7 +265,14 @@ class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for gamer's related Django user"""
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name', 'username')
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(many=False)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 
 class PostSerializer(serializers.ModelSerializer):
