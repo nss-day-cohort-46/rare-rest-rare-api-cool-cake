@@ -295,11 +295,8 @@ class PostView(ViewSet):
         if user.is_staff:
             post = Post.objects.get(pk=pk)
 
-            if post.approved:
-                return Response({}, status=status.HTTP_304_NOT_MODIFIED)
-
             try:
-                post.approved = True
+                post.approved = not post.approved
                 post.save()
                 return Response({}, status=status.HTTP_204_NO_CONTENT)
             except:
