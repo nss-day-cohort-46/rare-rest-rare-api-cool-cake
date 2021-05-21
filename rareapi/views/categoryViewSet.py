@@ -94,3 +94,31 @@ class CategoryViewSet(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None):
+        """
+            Handle PUT request for a category.
+            Returns:
+                Response -- Empty body with 204 status code.
+        """
+
+
+        try:
+            category = Category.objects.get(pk=pk)
+            user = request.auth.user
+
+            if user.is_staff:
+                category.label = request.data["label"]
+                category.save()
+
+                # 204 - everything worked but server has nothing to send back
+                # in response
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            else:
+                return Response({'message': "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Category.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
