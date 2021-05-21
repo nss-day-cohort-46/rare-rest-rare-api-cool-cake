@@ -149,6 +149,60 @@ class PostView(ViewSet):
 
         return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    @action(methods=['post', 'delete'], detail=True)
+    def tag(self, request, pk=None):
+        if request.method == "POST":
+            post = Post.objects.get(pk=pk)
+            # user = RareUser.objects.get(user=request.auth.user)
+            tag = Tag.objects.get(pk=request.data['tagId'])
+            user = request.auth.user
+
+            if user != post.user:
+                return Response({}, status=status.HTTP_403_FORBIDDEN)
+            try:
+                tagging = PostTag.objects.get(
+                    post=post, tag=tag
+                )
+                return Response(
+                    {'message': 'User already used this tag.'},
+                    status=status.HTTP_204_NO_CONTENT
+                )
+            except PostTag.DoesNotExist:
+                tagging = PostTag()
+                tagging.post = post
+                # tagging.user = user
+                tagging.tag = tag
+                tagging.save()
+
+                return Response({}, status=status.HTTP_201_CREATED)
+
+        elif request.method == "DELETE":
+            try:
+                post = Post.objects.get(pk=pk)
+            except Post.DoesNotExist:
+                return Response(
+                    {'message': 'Post does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # user = RareUser.objects.get(user=request.auth.user)
+            tag = Tag.objects.get(pk=request.data['tagId'])
+
+            try:
+                reacting = PostTag.objects.get(
+                    post=post, tag=tag
+                )
+                reacting.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+            except PostTag.DoesNotExist:
+                return Response(
+                    {'message': 'User has not used this tag.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+        return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     @action(methods=['get'], detail=True)
     def comments(self, request, pk=None):
         try:
@@ -240,7 +294,7 @@ class PostView(ViewSet):
         if not user.is_staff:
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 
-        if request.method == "PUT":
+        if user.is_staff:
             post = Post.objects.get(pk=pk)
 
             if post.approved:
@@ -255,6 +309,8 @@ class PostView(ViewSet):
                     {'message': 'Post does not exist.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        else:
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -267,7 +323,15 @@ class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for gamer's related Django user"""
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name', 'username')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(many=False)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_on')
 
 
 class PostSerializer(serializers.ModelSerializer):
