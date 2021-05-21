@@ -80,7 +80,7 @@ class PostView(ViewSet):
                     "-publication_date").filter(tags__label__icontains=searchTerm)
             else:
                 post = Post.objects.all().order_by(
-                    "-publication_date").filter(tags__label__icontains=searchTerm)
+                    "-publication_date")
 
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
@@ -93,9 +93,7 @@ class PostView(ViewSet):
                     publication_date__lt=date_thresh)
             serialized_posts = PostSerializer(
                 post, many=True, context={'request': request})
-        print("\n= Returnning" * 20)
-        print(serialized_posts.data)
-        print("=" * 20)
+
         return Response(serialized_posts.data)
 
     @action(methods=['post', 'delete'], detail=True)
