@@ -24,7 +24,7 @@ def login_user(request):
         password = req_body['password']
         authenticated_user = authenticate(username=username, password=password)
 
-        if authenticated_user is not None:
+        if authenticated_user is not None and authenticated_user.is_active:
             token = Token.objects.get(user=authenticated_user)
             is_staff = authenticated_user.is_staff
             user_id = authenticated_user.id

@@ -1,7 +1,8 @@
 import json
 from django.contrib.auth.models import User
 from django.db.models.functions import Lower
-from django.http.response import HttpResponse, HttpResponseServerError
+from django.http.response import HttpResponseServerError
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
@@ -45,6 +46,27 @@ class ProfileView(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+
+    @action(methods=['put'], detail=True)
+    def deactivate(self, request, pk=None):
+        """Managing admin approving post"""
+
+        user = request.auth.user
+        if user.is_staff:
+            try:
+                rareuser = User.objects.get(pk=pk)
+
+                if rareuser.is_staff:
+                    return Response({}, status=status.HTTP_403_FORBIDDEN) 
+            
+                rareuser.is_active = False
+                rareuser.save()
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            except User.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
 class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for django user model"""
