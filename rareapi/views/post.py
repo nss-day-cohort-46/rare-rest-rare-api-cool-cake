@@ -201,10 +201,9 @@ class PostView(ViewSet):
         """Managing admin approving post"""
 
         user = request.auth.user
-        if not user.is_staff:
-            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+        
 
-        if request.method == "PUT":
+        if user.is_staff:
             post = Post.objects.get(pk=pk)
 
             if post.approved:
@@ -219,6 +218,10 @@ class PostView(ViewSet):
                     {'message': 'Post does not exist.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        else:
+            return Response({}, status=status.HTTP_403_FORBIDDEN) 
+    
+
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
